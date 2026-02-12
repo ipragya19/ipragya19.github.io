@@ -148,3 +148,20 @@ document.addEventListener("DOMContentLoaded", () => {
     messageEl.innerHTML = messages[Math.floor(Math.random() * messages.length)];
   }
 });
+
+function sparkBurst() {
+  for (let i = 0; i < 22; i++) {
+    const spark = document.createElement("div");
+    spark.className = "spark";
+
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 120 + Math.random() * 80;
+
+    spark.style.setProperty("--x", `${Math.cos(angle) * distance}px`);
+    spark.style.setProperty("--y", `${Math.sin(angle) * distance}px`);
+
+    document.body.appendChild(spark);
+    setTimeout(() => spark.remove(), 800);
+  }
+}
+
