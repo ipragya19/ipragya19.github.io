@@ -170,3 +170,22 @@ button {
 .card .from {
   animation-delay: 0.8s;
 }
+
+.spark {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle, #ff6b9c, transparent);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: sparkFly 0.8s ease-out forwards;
+}
+
+@keyframes sparkFly {
+  to {
+    transform: translate(var(--x), var(--y));
+    opacity: 0;
+  }
+}
