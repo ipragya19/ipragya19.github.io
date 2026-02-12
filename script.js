@@ -11,11 +11,21 @@ function moveNoButton() {
 
   noBtn.style.left = `${x}px`;
   noBtn.style.top = `${y}px`;
+  noBtn.style.transform = "none";
+
+  // subtle vibration on supported mobiles
+  if (navigator.vibrate) {
+    navigator.vibrate(15);
+  }
 }
 
-noBtn.addEventListener("touchstart", moveNoButton);
+// Escape before click
 noBtn.addEventListener("mouseover", moveNoButton);
+noBtn.addEventListener("touchstart", moveNoButton);
 
 yesBtn.addEventListener("click", () => {
-  window.location.href = "yes.html";
+  document.body.classList.add("fade-out");
+  setTimeout(() => {
+    window.location.href = "yes.html";
+  }, 500);
 });
