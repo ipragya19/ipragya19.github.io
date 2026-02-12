@@ -116,3 +116,9 @@ h1 {
     opacity: 0;
   }
 }
+
+/* Prevent transform side-effects on fixed elements (mobile Safari fix) */
+body {
+  transform-style: preserve-3d;
+}
+
