@@ -5,16 +5,14 @@ const heartsContainer = document.getElementById("hearts");
 /* ---------------- NO BUTTON LOGIC ---------------- */
 
 function randomPosition() {
-  const padding = 30;
-  const safeTop = window.innerHeight * 0.2;
-  const safeBottom = window.innerHeight * 0.85;
+  const padding = 20;
 
   const maxX = window.innerWidth - noBtn.offsetWidth - padding;
-  const maxY = safeBottom - noBtn.offsetHeight - padding;
+  const maxY = window.innerHeight - noBtn.offsetHeight - padding;
 
   return {
     x: Math.random() * maxX,
-    y: safeTop + Math.random() * (maxY - safeTop)
+    y: Math.random() * maxY
   };
 }
 
@@ -22,28 +20,40 @@ function moveNoButton() {
   if (!noBtn) return;
 
   const { x, y } = randomPosition();
+
+  noBtn.style.position = "fixed"; // critical for mobile
   noBtn.style.left = `${x}px`;
   noBtn.style.top = `${y}px`;
+  noBtn.style.transform = "none"; // escape parent transforms
 
   if (navigator.vibrate) {
     navigator.vibrate(25);
   }
 }
 
-/* Initial + aggressive movement */
+/* Immediate + continuous movement */
 window.addEventListener("load", moveNoButton);
-setInterval(moveNoButton, 600);
+setInterval(moveNoButton, 550);
 
-/* Desktop & mobile evasion */
+/* Escape interactions */
 noBtn?.addEventListener("mouseover", moveNoButton);
 noBtn?.addEventListener("touchstart", moveNoButton);
 
-/* Yes button transition */
+/* YES button navigation */
 yesBtn?.addEventListener("click", () => {
   document.body.classList.add("fade-out");
   setTimeout(() => {
     window.location.href = "yes.html";
-  }, 500);
+  }, 450);
+});
+
+/* ---------------- PAGE RESTORE FIX ---------------- */
+
+/* Fix blank page when navigating back */
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted) {
+    document.body.classList.remove("fade-out");
+  }
 });
 
 /* ---------------- FLOATING HEARTS ---------------- */
@@ -55,10 +65,11 @@ function createHeart() {
 
   const heart = document.createElement("div");
   heart.className = "heart";
-  heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+  heart.textContent =
+    heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
 
   heart.style.left = Math.random() * 100 + "vw";
-  heart.style.animationDuration = 5 + Math.random() * 3 + "s";
+  heart.style.animationDuration = 4 + Math.random() * 3 + "s";
   heart.style.fontSize = 14 + Math.random() * 14 + "px";
 
   heartsContainer.appendChild(heart);
@@ -66,4 +77,4 @@ function createHeart() {
   setTimeout(() => heart.remove(), 8000);
 }
 
-setInterval(createHeart, 450);
+setInterval(createHeart, 400);
