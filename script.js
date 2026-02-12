@@ -2,83 +2,118 @@ document.addEventListener("DOMContentLoaded", () => {
   const noBtn = document.getElementById("noBtn");
   const yesBtn = document.getElementById("yesBtn");
   const heartsContainer = document.getElementById("hearts");
+  const particlesContainer = document.getElementById("particles");
   const messageEl = document.getElementById("valentineMessage");
+  const music = document.getElementById("music");
+  const countdown = document.getElementById("countdown");
+  const dots = document.getElementById("dots");
 
-  /* ---------------- NO BUTTON LOGIC (PAGE 1 ONLY) ---------------- */
-
-  function randomPosition() {
-    const padding = 20;
-    const maxX = window.innerWidth - (noBtn?.offsetWidth || 0) - padding;
-    const maxY = window.innerHeight - (noBtn?.offsetHeight || 0) - padding;
-
-    return {
-      x: Math.random() * maxX,
-      y: Math.random() * maxY
-    };
-  }
+  /* ---------------- NO BUTTON ---------------- */
 
   function moveNoButton() {
     if (!noBtn) return;
-
-    const { x, y } = randomPosition();
-    noBtn.style.position = "fixed";
+    const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+    const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
     noBtn.style.left = `${x}px`;
     noBtn.style.top = `${y}px`;
-    noBtn.style.transform = "none";
-
-    if (navigator.vibrate) {
-      navigator.vibrate(25);
-    }
+    navigator.vibrate?.(20);
   }
 
   if (noBtn) {
     moveNoButton();
-    setInterval(moveNoButton, 550);
+    setInterval(moveNoButton, 500);
     noBtn.addEventListener("mouseover", moveNoButton);
     noBtn.addEventListener("touchstart", moveNoButton);
   }
 
-  /* ---------------- YES BUTTON NAV ---------------- */
+  /* ---------------- YES CLICK EFFECTS ---------------- */
 
-  if (yesBtn) {
-    yesBtn.addEventListener("click", () => {
+  yesBtn?.addEventListener("click", (e) => {
+    sparkleBurst(e.clientX, e.clientY);
+    countdown.classList.remove("hidden");
+    startDots();
+
+    setTimeout(() => {
       document.body.classList.add("fade-out");
       setTimeout(() => {
         window.location.href = "yes.html";
-      }, 450);
-    });
+      }, 500);
+    }, 2200);
+  });
+
+  /* ---------------- SPARKLES ---------------- */
+
+  function sparkleBurst(x, y) {
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement("div");
+      p.className = "particle";
+      p.textContent = "✨";
+      p.style.left = x + "px";
+      p.style.top = y + "px";
+      p.style.setProperty("--x", `${Math.random()*120-60}px`);
+      p.style.setProperty("--y", `${Math.random()*120-60}px`);
+      particlesContainer.appendChild(p);
+      setTimeout(() => p.remove(), 800);
+    }
   }
 
-  /* Fix blank page on back navigation */
-  window.addEventListener("pageshow", (event) => {
-    if (event.persisted) {
-      document.body.classList.remove("fade-out");
+  /* ---------------- COUNTDOWN DOTS ---------------- */
+
+  function startDots() {
+    let count = 1;
+    setInterval(() => {
+      dots.textContent = ".".repeat(count % 4 || 1);
+      count++;
+    }, 400);
+  }
+
+  /* ---------------- HEARTS ON TAP ---------------- */
+
+  document.addEventListener("click", (e) => {
+    for (let i = 0; i < 6; i++) {
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.textContent = "💙";
+      h.style.left = e.clientX + "px";
+      h.style.top = e.clientY + "px";
+      h.style.fontSize = "16px";
+      h.style.animationDuration = "2.5s";
+      heartsContainer.appendChild(h);
+      setTimeout(() => h.remove(), 3000);
     }
   });
 
-  /* ---------------- FLOATING HEARTS (BOTH PAGES) ---------------- */
+  /* ---------------- FLOATING HEARTS ---------------- */
 
-  const heartEmojis = ["💙", "💙", "✨"];
-
-  function createHeart() {
+  setInterval(() => {
     if (!heartsContainer) return;
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.textContent = "💙";
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.fontSize = 14 + Math.random() * 14 + "px";
+    h.style.animationDuration = 4 + Math.random() * 3 + "s";
+    heartsContainer.appendChild(h);
+    setTimeout(() => h.remove(), 8000);
+  }, 450);
 
-    const heart = document.createElement("div");
-    heart.className = "heart";
-    heart.textContent =
-      heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+  /* ---------------- MUSIC FADE-IN ---------------- */
 
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.animationDuration = 4 + Math.random() * 3 + "s";
-    heart.style.fontSize = 14 + Math.random() * 14 + "px";
-
-    heartsContainer.appendChild(heart);
-    setTimeout(() => heart.remove(), 8000);
+  if (music) {
+    music.volume = 0;
+    music.play().catch(() => {});
+    let v = 0;
+    const fade = setInterval(() => {
+      if (v < 0.8) {
+        v += 0.04;
+        music.volume = v;
+      } else {
+        clearInterval(fade);
+      }
+    }, 100);
   }
 
-  setInterval(createHeart, 400);
-
-  /* ---------------- PHASE 2B: RANDOM MESSAGE (PAGE 2 ONLY) ---------------- */
+  /* ---------------- RANDOM MESSAGE ---------------- */
 
   if (messageEl) {
     const messages = [
@@ -103,8 +138,6 @@ document.addEventListener("DOMContentLoaded", () => {
        This Valentine comes with attention, intention, and zero shortcuts.<br><br>
        Thank you for trusting the process.`
     ];
-
-    const randomIndex = Math.floor(Math.random() * messages.length);
-    messageEl.innerHTML = messages[randomIndex];
+    messageEl.innerHTML = messages[Math.floor(Math.random() * messages.length)];
   }
 });
