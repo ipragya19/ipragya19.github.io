@@ -6,11 +6,12 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  background: radial-gradient(circle at top, #b3ecff, #4f83ff);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #0b2c4d;
+  overflow: hidden;
   transition: opacity 0.5s ease;
 }
 
@@ -18,14 +19,24 @@ body.fade-out {
   opacity: 0;
 }
 
+/* 💙 Card polish */
 .card {
-  background: rgba(255, 255, 255, 0.92);
-  border-radius: 26px;
-  padding: 34px 28px;
+  position: relative;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 28px;
+  padding: 36px 30px;
   max-width: 380px;
   width: 90%;
   text-align: center;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.18);
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  animation: floatCard 6s ease-in-out infinite;
+}
+
+@keyframes floatCard {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
 h1 {
@@ -39,7 +50,7 @@ h1 {
 
 .message {
   font-size: 1.15rem;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 .from {
@@ -48,26 +59,28 @@ h1 {
 }
 
 .buttons {
-  margin-top: 34px;
+  margin-top: 36px;
 }
 
 #yesBtn {
-  padding: 14px 30px;
-  font-size: 1.1rem;
+  padding: 15px 32px;
+  font-size: 1.15rem;
   border-radius: 40px;
   border: none;
   cursor: pointer;
-  background: #1e90ff;
+  background: linear-gradient(135deg, #4facfe, #00c6ff);
   color: white;
-  box-shadow: 0 10px 20px rgba(30, 144, 255, 0.4);
+  box-shadow: 0 14px 28px rgba(0, 140, 255, 0.45);
+  transition: transform 0.2s ease;
 }
 
-/* Floating NO button */
+#yesBtn:active {
+  transform: scale(0.96);
+}
+
+/* ❌ Floating NO button */
 #noBtn {
   position: fixed;
-  top: 60%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   padding: 12px 24px;
   font-size: 1rem;
   border-radius: 30px;
@@ -75,4 +88,31 @@ h1 {
   background: #e3f2ff;
   color: #0b2c4d;
   z-index: 999;
+}
+
+/* 💙 Floating hearts */
+#hearts {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.heart {
+  position: absolute;
+  font-size: 18px;
+  opacity: 0.8;
+  animation: floatUp 8s linear infinite;
+}
+
+@keyframes floatUp {
+  from {
+    transform: translateY(100vh) scale(0.8);
+    opacity: 0;
+  }
+  10% { opacity: 0.8; }
+  to {
+    transform: translateY(-10vh) scale(1.2);
+    opacity: 0;
+  }
 }
