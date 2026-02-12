@@ -1,16 +1,17 @@
 * {
   box-sizing: border-box;
-  font-family: "Segoe UI", system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 body {
-  margin: 0;
   min-height: 100vh;
-  background: radial-gradient(circle at top, #b3ecff, #4f83ff);
+  background: linear-gradient(135deg, #0a2540, #1b4f72);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #0b2c4d;
   overflow: hidden;
   transition: opacity 0.5s ease;
 }
@@ -19,106 +20,153 @@ body.fade-out {
   opacity: 0;
 }
 
-/* 💙 Card polish */
+/* Card */
+
 .card {
-  position: relative;
-  background: rgba(255, 255, 255, 0.94);
-  border-radius: 28px;
-  padding: 36px 30px;
-  max-width: 380px;
-  width: 90%;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 32px 28px;
+  border-radius: 18px;
   text-align: center;
-  box-shadow:
-    0 30px 60px rgba(0, 0, 0, 0.18),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
-  animation: floatCard 6s ease-in-out infinite;
+  width: 90%;
+  max-width: 360px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
 }
 
-@keyframes floatCard {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
+/* Text */
 
 h1 {
-  margin-bottom: 14px;
+  font-size: 1.6rem;
+  margin-bottom: 16px;
 }
 
-.question {
-  font-size: 1.4rem;
-  margin: 22px 0;
-}
-
+.question,
 .message {
-  font-size: 1.15rem;
-  line-height: 1.65;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
 
 .from {
-  margin-top: 28px;
-  font-weight: 500;
+  font-size: 0.95rem;
+  opacity: 0.85;
 }
 
+/* Buttons */
+
 .buttons {
-  margin-top: 36px;
+  margin-top: 16px;
+}
+
+button {
+  padding: 12px 26px;
+  border-radius: 30px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
 }
 
 #yesBtn {
-  padding: 15px 32px;
-  font-size: 1.15rem;
-  border-radius: 40px;
-  border: none;
-  cursor: pointer;
-  background: linear-gradient(135deg, #4facfe, #00c6ff);
+  background: #ff4d6d;
   color: white;
-  box-shadow: 0 14px 28px rgba(0, 140, 255, 0.45);
-  transition: transform 0.2s ease;
 }
 
-#yesBtn:active {
-  transform: scale(0.96);
-}
+/* NO button */
 
-/* ❌ Floating NO button */
 #noBtn {
   position: fixed;
-  padding: 12px 24px;
-  font-size: 1rem;
+  padding: 10px 20px;
   border-radius: 30px;
+  background: #1b4f72;
+  color: white;
   border: none;
-  background: #e3f2ff;
-  color: #0b2c4d;
-  z-index: 999;
+  z-index: 10;
 }
 
-/* 💙 Floating hearts */
+/* Countdown */
+
+#countdown {
+  position: fixed;
+  bottom: 40px;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Floating hearts */
+
 #hearts {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 0;
 }
 
 .heart {
   position: absolute;
-  font-size: 18px;
-  opacity: 0.8;
-  animation: floatUp 8s linear infinite;
+  animation: floatUp linear forwards;
 }
 
 @keyframes floatUp {
   from {
-    transform: translateY(100vh) scale(0.8);
-    opacity: 0;
+    transform: translateY(100vh);
+    opacity: 1;
   }
-  10% { opacity: 0.8; }
   to {
-    transform: translateY(-10vh) scale(1.2);
+    transform: translateY(-10vh);
     opacity: 0;
   }
 }
 
-/* Prevent transform side-effects on fixed elements (mobile Safari fix) */
-body {
-  transform-style: preserve-3d;
+/* Spark particles */
+
+#particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
 }
 
+.particle {
+  position: absolute;
+  animation: explode 700ms ease-out forwards;
+}
+
+@keyframes explode {
+  from {
+    transform: scale(1) translate(0,0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.3) translate(var(--x), var(--y));
+    opacity: 0;
+  }
+}
+
+/* Entrance animation */
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card h1,
+.card .message,
+.card .from {
+  animation: fadeSlideIn 1.2s ease-out both;
+}
+
+.card .message {
+  animation-delay: 0.4s;
+}
+
+.card .from {
+  animation-delay: 0.8s;
+}
