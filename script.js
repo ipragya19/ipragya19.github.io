@@ -1,92 +1,143 @@
-// Fix blank page on back navigation
-window.addEventListener("pageshow", function (event) {
-  if (event.persisted) {
-    window.location.reload();
-  }
-});
+document.addEventListener("DOMContentLoaded", () => {
+  const noBtn = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+  const heartsContainer = document.getElementById("hearts");
+  const particlesContainer = document.getElementById("particles");
+  const messageEl = document.getElementById("valentineMessage");
+  const music = document.getElementById("music");
+  const countdown = document.getElementById("countdown");
+  const dots = document.getElementById("dots");
 
-/* ---------- INDEX PAGE ---------- */
-const yesBtn = document.getElementById("yesBtn");
-const noBtn = document.getElementById("noBtn");
-const countdown = document.getElementById("countdown");
+  /* ---------------- NO BUTTON ---------------- */
 
-if (noBtn) {
   function moveNoButton() {
-    const x = Math.random() * (window.innerWidth - 100);
-    const y = Math.random() * (window.innerHeight - 100);
+    if (!noBtn) return;
+    const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+    const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
     noBtn.style.left = `${x}px`;
     noBtn.style.top = `${y}px`;
+    navigator.vibrate?.(20);
   }
 
-  setInterval(moveNoButton, 700);
+  if (noBtn) {
+    moveNoButton();
+    setInterval(moveNoButton, 500);
+    noBtn.addEventListener("mouseover", moveNoButton);
+    noBtn.addEventListener("touchstart", moveNoButton);
+  }
 
-  noBtn.addEventListener("mouseenter", moveNoButton);
-  noBtn.addEventListener("click", moveNoButton);
-}
+  /* ---------------- YES CLICK EFFECTS ---------------- */
 
-if (yesBtn) {
-  let count = 3;
-  yesBtn.addEventListener("click", () => {
-    fireworksBurst();
-    countdown.textContent = "Preparing something special…";
+  yesBtn?.addEventListener("click", (e) => {
+    sparkleBurst(e.clientX, e.clientY);
+    countdown.classList.remove("hidden");
+    startDots();
 
-    const timer = setInterval(() => {
-      countdown.textContent = `Redirecting in ${count}…`;
-      count--;
-      if (count < 0) {
-        clearInterval(timer);
+    setTimeout(() => {
+      document.body.classList.add("fade-out");
+      setTimeout(() => {
         window.location.href = "yes.html";
-      }
-    }, 700);
+      }, 500);
+    }, 2200);
   });
-}
 
-/* ---------- YES PAGE ---------- */
-const messages = [
-  "Thank you for saying yes. Some moments don’t need grand gestures — just sincerity.",
-  "You chose yes, and that already makes this Valentine special.",
-  "This wasn’t a question. It was an inevitability.",
-  "Simple choices. Meaningful consequences. Happy Valentine’s."
-];
+  /* ---------------- SPARKLES ---------------- */
 
-const msg = document.getElementById("dynamicMessage");
-if (msg) {
-  msg.textContent = messages[Math.floor(Math.random() * messages.length)];
-}
-
-/* Music fade-in */
-const music = document.getElementById("music");
-if (music) {
-  music.volume = 0;
-  music.play().catch(() => {});
-  let v = 0;
-  const fade = setInterval(() => {
-    v += 0.04;
-    music.volume = Math.min(v, 0.8);
-    if (v >= 0.8) clearInterval(fade);
-  }, 120);
-}
-
-/* Fireworks */
-function fireworksBurst() {
-  for (let i = 0; i < 24; i++) {
-    const spark = document.createElement("div");
-    spark.className = "spark";
-    const angle = Math.random() * 2 * Math.PI;
-    const dist = 120 + Math.random() * 80;
-    spark.style.setProperty("--x", `${Math.cos(angle) * dist}px`);
-    spark.style.setProperty("--y", `${Math.sin(angle) * dist}px`);
-    document.body.appendChild(spark);
-    setTimeout(() => spark.remove(), 900);
+  function sparkleBurst(x, y) {
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement("div");
+      p.className = "particle";
+      p.textContent = "✨";
+      p.style.left = x + "px";
+      p.style.top = y + "px";
+      p.style.setProperty("--x", `${Math.random()*120-60}px`);
+      p.style.setProperty("--y", `${Math.random()*120-60}px`);
+      particlesContainer.appendChild(p);
+      setTimeout(() => p.remove(), 800);
+    }
   }
-}
 
-/* Floating hearts on tap/click */
-document.addEventListener("click", () => {
-  const heart = document.createElement("div");
-  heart.className = "heart-float";
-  heart.textContent = "❤️";
-  heart.style.left = Math.random() * 100 + "vw";
-  document.body.appendChild(heart);
-  setTimeout(() => heart.remove(), 4000);
+  /* ---------------- COUNTDOWN DOTS ---------------- */
+
+  function startDots() {
+    let count = 1;
+    setInterval(() => {
+      dots.textContent = ".".repeat(count % 4 || 1);
+      count++;
+    }, 400);
+  }
+
+  /* ---------------- HEARTS ON TAP ---------------- */
+
+  document.addEventListener("click", (e) => {
+    for (let i = 0; i < 6; i++) {
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.textContent = "💙";
+      h.style.left = e.clientX + "px";
+      h.style.top = e.clientY + "px";
+      h.style.fontSize = "16px";
+      h.style.animationDuration = "2.5s";
+      heartsContainer.appendChild(h);
+      setTimeout(() => h.remove(), 3000);
+    }
+  });
+
+  /* ---------------- FLOATING HEARTS ---------------- */
+
+  setInterval(() => {
+    if (!heartsContainer) return;
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.textContent = "💙";
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.fontSize = 14 + Math.random() * 14 + "px";
+    h.style.animationDuration = 4 + Math.random() * 3 + "s";
+    heartsContainer.appendChild(h);
+    setTimeout(() => h.remove(), 8000);
+  }, 450);
+
+  /* ---------------- MUSIC FADE-IN ---------------- */
+
+  if (music) {
+    music.volume = 0;
+    music.play().catch(() => {});
+    let v = 0;
+    const fade = setInterval(() => {
+      if (v < 0.8) {
+        v += 0.04;
+        music.volume = v;
+      } else {
+        clearInterval(fade);
+      }
+    }, 100);
+  }
+
+  /* ---------------- RANDOM MESSAGE ---------------- */
+
+  if (messageEl) {
+    const messages = [
+      `Thank you for saying yes.<br><br>
+       This response has been logged, verified, and marked as high priority.<br><br>
+       Expect warmth, laughter, and a few carefully planned surprises.<br><br>
+       Some things are worth building properly.`,
+
+      `You could have said anything.<br>
+       You didn’t.<br><br>
+       And that means more than you think.<br><br>
+       Stay close.<br>
+       Something thoughtful is on its way.`,
+
+      `No grand speeches.<br>
+       No dramatic promises.<br><br>
+       Just this:<br>
+       I’m glad it’s you.<br><br>
+       Now wait. The good part is loading.`,
+
+      `Your answer has been accepted without retries.<br><br>
+       This Valentine comes with attention, intention, and zero shortcuts.<br><br>
+       Thank you for trusting the process.`
+    ];
+    messageEl.innerHTML = messages[Math.floor(Math.random() * messages.length)];
+  }
 });
