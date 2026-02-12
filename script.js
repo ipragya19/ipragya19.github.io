@@ -1,148 +1,92 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const noBtn = document.getElementById("noBtn");
-  const yesBtn = document.getElementById("yesBtn");
-  const hearts = document.getElementById("hearts");
-  const particles = document.getElementById("particles");
-  const countdown = document.getElementById("countdown");
-  const dots = document.getElementById("dots");
-  const messageEl = document.getElementById("valentineMessage");
-  const music = document.getElementById("music");
+// Fix blank page on back navigation
+window.addEventListener("pageshow", function (event) {
+  if (event.persisted) {
+    window.location.reload();
+  }
+});
 
-  let dotsTimer = null;
+/* ---------- INDEX PAGE ---------- */
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+const countdown = document.getElementById("countdown");
 
-  /* ---------- NO BUTTON ---------- */
-
-  function moveNo() {
-    if (!noBtn) return;
-    const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-    const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+if (noBtn) {
+  function moveNoButton() {
+    const x = Math.random() * (window.innerWidth - 100);
+    const y = Math.random() * (window.innerHeight - 100);
     noBtn.style.left = `${x}px`;
     noBtn.style.top = `${y}px`;
-    navigator.vibrate?.(20);
   }
 
-  if (noBtn) {
-    moveNo();
-    setInterval(moveNo, 500);
-    noBtn.addEventListener("mouseover", moveNo);
-    noBtn.addEventListener("touchstart", moveNo);
-  }
+  setInterval(moveNoButton, 700);
 
-  /* ---------- YES CLICK ---------- */
+  noBtn.addEventListener("mouseenter", moveNoButton);
+  noBtn.addEventListener("click", moveNoButton);
+}
 
-  yesBtn?.addEventListener("click", () => {
-    sparkleAtButton(yesBtn);
-    showCountdown();
+if (yesBtn) {
+  let count = 3;
+  yesBtn.addEventListener("click", () => {
+    fireworksBurst();
+    countdown.textContent = "Preparing something special…";
 
-    setTimeout(() => {
-      document.body.classList.add("fade-out");
-      setTimeout(() => {
+    const timer = setInterval(() => {
+      countdown.textContent = `Redirecting in ${count}…`;
+      count--;
+      if (count < 0) {
+        clearInterval(timer);
         window.location.href = "yes.html";
-      }, 500);
-    }, 1800);
-  });
-
-  /* ---------- SPARKLE (CLEAN) ---------- */
-
-  function sparkleAtButton(btn) {
-    const rect = btn.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-
-    for (let i = 0; i < 10; i++) {
-      const p = document.createElement("div");
-      p.className = "particle";
-      p.textContent = "✨";
-      p.style.left = `${cx}px`;
-      p.style.top = `${cy}px`;
-      p.style.setProperty("--x", `${Math.random()*80 - 40}px`);
-      p.style.setProperty("--y", `${Math.random()*80 - 40}px`);
-      particles.appendChild(p);
-      setTimeout(() => p.remove(), 700);
-    }
-  }
-
-  /* ---------- COUNTDOWN ---------- */
-
-  function showCountdown() {
-    countdown.classList.remove("hidden");
-    let count = 1;
-    dotsTimer = setInterval(() => {
-      dots.textContent = ".".repeat(count % 4 || 1);
-      count++;
-    }, 400);
-  }
-
-  /* ---------- HEARTS ---------- */
-
-  document.addEventListener("click", (e) => {
-    if (!hearts) return;
-    for (let i = 0; i < 4; i++) {
-      const h = document.createElement("div");
-      h.className = "heart";
-      h.textContent = "💙";
-      h.style.left = `${e.clientX}px`;
-      h.style.top = `${e.clientY}px`;
-      h.style.animationDuration = "2.5s";
-      hearts.appendChild(h);
-      setTimeout(() => h.remove(), 3000);
-    }
-  });
-
-  setInterval(() => {
-    if (!hearts) return;
-    const h = document.createElement("div");
-    h.className = "heart";
-    h.textContent = "💙";
-    h.style.left = Math.random() * 100 + "vw";
-    h.style.animationDuration = "5s";
-    hearts.appendChild(h);
-    setTimeout(() => h.remove(), 8000);
-  }, 600);
-
-  /* ---------- MUSIC (YES PAGE) ---------- */
-
-  if (music) {
-    music.volume = 0;
-    music.play().catch(() => {});
-    let v = 0;
-    const fade = setInterval(() => {
-      if (v < 0.8) {
-        v += 0.04;
-        music.volume = v;
-      } else {
-        clearInterval(fade);
       }
-    }, 120);
-  }
-
-  /* ---------- RANDOM MESSAGE ---------- */
-
-  if (messageEl) {
-    const messages = [
-      `Thank you for saying yes.<br><br>
-       This response has been logged, verified, and marked as high priority.<br><br>
-       Some things are worth building properly.`,
-
-      `You could have said anything.<br>
-       You didn’t.<br><br>
-       And that means more than you think.`,
-
-      `No grand speeches.<br><br>
-       Just this:<br>
-       I’m glad it’s you.`,
-
-      `Your answer has been accepted without retries.<br><br>
-       Thank you for trusting the process.`
-    ];
-    messageEl.innerHTML = messages[Math.floor(Math.random() * messages.length)];
-  }
-
-  /* ---------- BACK NAV FIX ---------- */
-
-  window.addEventListener("pageshow", () => {
-    document.body.classList.remove("fade-out");
-    countdown?.classList.add("hidden");
-    if (dotsTimer) clearInterval(dotsTimer);
+    }, 700);
   });
+}
+
+/* ---------- YES PAGE ---------- */
+const messages = [
+  "Thank you for saying yes. Some moments don’t need grand gestures — just sincerity.",
+  "You chose yes, and that already makes this Valentine special.",
+  "This wasn’t a question. It was an inevitability.",
+  "Simple choices. Meaningful consequences. Happy Valentine’s."
+];
+
+const msg = document.getElementById("dynamicMessage");
+if (msg) {
+  msg.textContent = messages[Math.floor(Math.random() * messages.length)];
+}
+
+/* Music fade-in */
+const music = document.getElementById("music");
+if (music) {
+  music.volume = 0;
+  music.play().catch(() => {});
+  let v = 0;
+  const fade = setInterval(() => {
+    v += 0.04;
+    music.volume = Math.min(v, 0.8);
+    if (v >= 0.8) clearInterval(fade);
+  }, 120);
+}
+
+/* Fireworks */
+function fireworksBurst() {
+  for (let i = 0; i < 24; i++) {
+    const spark = document.createElement("div");
+    spark.className = "spark";
+    const angle = Math.random() * 2 * Math.PI;
+    const dist = 120 + Math.random() * 80;
+    spark.style.setProperty("--x", `${Math.cos(angle) * dist}px`);
+    spark.style.setProperty("--y", `${Math.sin(angle) * dist}px`);
+    document.body.appendChild(spark);
+    setTimeout(() => spark.remove(), 900);
+  }
+}
+
+/* Floating hearts on tap/click */
+document.addEventListener("click", () => {
+  const heart = document.createElement("div");
+  heart.className = "heart-float";
+  heart.textContent = "❤️";
+  heart.style.left = Math.random() * 100 + "vw";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 4000);
 });
