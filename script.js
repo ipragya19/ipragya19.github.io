@@ -1,9 +1,16 @@
-// Fix blank page on browser back (safe, minimal)
+// Fix blank page on browser back (mobile + desktop)
 window.addEventListener("pageshow", function (event) {
   if (event.persisted) {
     window.location.reload();
   }
 });
+
+document.addEventListener("visibilitychange", function () {
+  if (document.visibilityState === "visible") {
+    window.location.reload();
+  }
+});
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const noBtn = document.getElementById("noBtn");
@@ -164,4 +171,8 @@ function sparkBurst() {
     setTimeout(() => spark.remove(), 800);
   }
 }
-
+const yesButton = document.getElementById("yesBtn");
+yesButton.addEventListener("click", () => {
+  sparkBurst(); // 🔥 added
+  window.location.href = "yes.html";
+});
