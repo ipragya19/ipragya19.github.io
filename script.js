@@ -1,10 +1,11 @@
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
+const heartsContainer = document.getElementById("hearts");
+
+/* ---------------- NO BUTTON LOGIC ---------------- */
 
 function randomPosition() {
   const padding = 20;
-
-  // Avoid center area where the card & YES button are
   const safeTop = window.innerHeight * 0.25;
   const safeBottom = window.innerHeight * 0.9;
 
@@ -19,37 +20,44 @@ function randomPosition() {
 
 function moveNoButton() {
   const { x, y } = randomPosition();
-
   noBtn.style.left = `${x}px`;
   noBtn.style.top = `${y}px`;
-  noBtn.style.transform = "none";
 
-  // subtle vibration on mobile
   if (navigator.vibrate) {
     navigator.vibrate(15);
   }
 }
 
-/* 🚀 MOVE IMMEDIATELY ON LOAD (key fix) */
-window.addEventListener("load", () => {
-  moveNoButton();
-});
-
-/* 🔁 AUTO MOVE */
-setInterval(() => {
-  moveNoButton();
-}, 1200);
-
-/* 🖱️ Laptop: escape on hover */
+window.addEventListener("load", moveNoButton);
+setInterval(moveNoButton, 1200);
 noBtn.addEventListener("mouseover", moveNoButton);
-
-/* 📱 Mobile: escape on tap */
 noBtn.addEventListener("touchstart", moveNoButton);
 
-/* YES button */
 yesBtn.addEventListener("click", () => {
   document.body.classList.add("fade-out");
   setTimeout(() => {
     window.location.href = "yes.html";
   }, 500);
 });
+
+/* ---------------- FLOATING HEARTS ---------------- */
+
+const heartEmojis = ["💙", "💎", "✨"];
+
+function createHeart() {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.animationDuration = 6 + Math.random() * 4 + "s";
+  heart.style.fontSize = 14 + Math.random() * 12 + "px";
+
+  heartsContainer.appendChild(heart);
+
+  setTimeout(() => {
+    heart.remove();
+  }, 9000);
+}
+
+setInterval(createHeart, 600);
