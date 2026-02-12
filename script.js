@@ -3,12 +3,17 @@ const yesBtn = document.getElementById("yesBtn");
 
 function randomPosition() {
   const padding = 20;
+
+  // Avoid center area where the card & YES button are
+  const safeTop = window.innerHeight * 0.25;
+  const safeBottom = window.innerHeight * 0.9;
+
   const maxX = window.innerWidth - noBtn.offsetWidth - padding;
-  const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+  const maxY = safeBottom - noBtn.offsetHeight - padding;
 
   return {
     x: Math.random() * maxX,
-    y: Math.random() * maxY
+    y: safeTop + Math.random() * (maxY - safeTop)
   };
 }
 
@@ -25,10 +30,15 @@ function moveNoButton() {
   }
 }
 
-/* 🔁 AUTO MOVE (key fix for mobile) */
+/* 🚀 MOVE IMMEDIATELY ON LOAD (key fix) */
+window.addEventListener("load", () => {
+  moveNoButton();
+});
+
+/* 🔁 AUTO MOVE */
 setInterval(() => {
   moveNoButton();
-}, 1200); // moves every 1.2 seconds
+}, 1200);
 
 /* 🖱️ Laptop: escape on hover */
 noBtn.addEventListener("mouseover", moveNoButton);
